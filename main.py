@@ -15,13 +15,14 @@ filename = './Result/test1.jpeg'
 im = Image.open(filename)
 
 #順位付きクロップ
-#im2 = im.crop((50, 130, 600, 633))
+#im = im.crop((50, 130, 600, 633))
 
 #名前からクロップ(順位ごとにクロップする)
 #リザルト画像の順位が出るところが固定なので定数で問題ない
 #値は経験的に決めた
 crop = []
 #im = im.crop((150, 130, 600, 633))
+#im = im.crop((150, 130, 600, 130+42))
 
 temp=42
 crop_name = [(1,4,350,37)]
@@ -48,7 +49,7 @@ print("Available languages: %s" % ", ".join(langs))
 # to use.
 
 #timeは入力画像のサイズを何倍にするかの引数
-time = 3
+time = 1
 b = 8
 for i in range(12):
  save_name = './Result/test1_rank' + str(i+1) + '_name.jpeg'
@@ -83,6 +84,15 @@ for i in range(12):
    else:
     item = 0
    im2.putpixel((x, y), item)
+
+ for x in range(im2.size[0]):
+  for y in range(im2.size[1]):
+   item = im2.getpixel((x, y))
+   if item == 255:
+    item = 0
+   else:
+    item = 255
+   im2.putpixel((x, y), item)
  im2 = im2.filter(ImageFilter.MedianFilter())
  im2 = im2.filter(ImageFilter.MedianFilter())
  im2 = im2.filter(ImageFilter.MedianFilter())
@@ -90,13 +100,29 @@ for i in range(12):
 
  im_name = im2.crop(crop_name[0])
  im_item = im2.crop(crop_item[0])
+ dd = 23
+ im_item1 = im_item.crop((65, 0, 65+dd, 33))
+ im_item2 = im_item.crop((65-dd-2, 0, 65-2,33))
+ im_item3 = im_item.crop((65-2*dd-4, 0, 65-dd-4, 33))
+ """
+ if i == 3:
+  im_item.show()
+  im_item1.show()
+  im_item2.show()
+  im_item3.show()
+ """
+
+
  #if i == 6:
   #im_name.show()
   #im_item.show()
- """
- im_name = im_name.resize((im_name.width*time, im_name.height*time))
- im_item = im_item.resize((im_item.width*time, im_item.height*time))
 
+ im_name = im_name.resize((im_name.width*time, im_name.height*time))
+ im_item1 = im_item1.resize((im_item1.width*time, im_item1.height*time))
+ im_item2 = im_item2.resize((im_item2.width*time, im_item2.height*time))
+ im_item3 = im_item3.resize((im_item3.width*time, im_item3.height*time))
+
+ """
  api_name = PyTessBaseAPI(psm=PSM.AUTO, lang='jpn')
  api_name.SetImage(im_name)
 
@@ -115,10 +141,24 @@ for i in range(12):
   builder=pyocr.builders.TextBuilder(tesseract_layout=b)
  )
 
- txt_item = tool.image_to_string(
+ txt_item1 = tool.image_to_string(
   #Image.open(filename),
-  im_item,
-  lang="eng",
+  im_item1,
+  lang="jpn",
+  builder=pyocr.builders.TextBuilder(tesseract_layout=b)
+ )
+
+ txt_item2 = tool.image_to_string(
+  #Image.open(filename),
+  im_item2,
+  lang="jpn",
+  builder=pyocr.builders.TextBuilder(tesseract_layout=b)
+ )
+
+ txt_item3 = tool.image_to_string(
+  #Image.open(filename),
+  im_item3,
+  lang="jpn",
   builder=pyocr.builders.TextBuilder(tesseract_layout=b)
  )
 
@@ -126,7 +166,7 @@ for i in range(12):
 
  # txt is a Python string
  a = ':'
- print((i+1), txt_name, a, txt_item)
+ print((i+1), txt_name, a, txt_item1, txt_item2, txt_item3)
 
  #文字だと認識した範囲を出力する
  res = tool.image_to_string(
