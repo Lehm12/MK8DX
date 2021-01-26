@@ -1,11 +1,29 @@
-form model import Net
+# coding: UTF-8
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
 
+from torchvision.datasets import CIFAR10
+
+import torch
+
+from torch.autograd import Variable
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
+# from zero_out import zero_out
+import numpy as np
+import math
+
+from model import Net
+
+net = Net
 
 transform_train = transforms.Compose([
         transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
 ])
-
 transform_test = transforms.Compose([
         transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
@@ -25,6 +43,7 @@ print(device)
 net = Net()
 net.to(device)
 
+# cpuで実行する場合はコメントアウトする　てか133に組み込め
 # with torch.cuda.device(0):
 #   net.cuda()
 
